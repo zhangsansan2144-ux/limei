@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的作品集 | 摄影/海报/视频剪辑</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义样式 -->
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #f8f9fa;
+            scroll-behavior: smooth;
+        }
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #212529 !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .nav-link:hover {
+            color: #ffc107 !important;
+        }
+        /* 英雄区（首页头部） */
+        .hero {
+            height: 45vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://picsum.photos/1920/1080?random=1') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.2rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        .hero .btn {
+            padding: 0.5rem 1.2rem;
+            font-size: 1.2rem;
+        }
+        /* 作品分类区 */
+        .category-card {
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .category-card:hover {
+            transform: scale(1.05);
+            color: #ffc107;
+        }
+        .category-overlay {
+            background: rgba(0,0,0,0.6);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 作品展示容器 - 修复核心：统一尺寸+闭合布局 */
+        .work-card {
+            border: none;          /* 去掉边框 */
+            box-shadow: none;      /* 去掉阴影 */
+            border-radius: 0;      /* 去掉圆角 */
+            overflow: hidden;      /* 恢复溢出隐藏，避免图片超出容器 */
+            margin-bottom: 30px;   /* 保留底部间距避免拥挤 */
+            background: transparent; /* 背景透明 */
+            transition: none;      /* 去掉hover动画 */
+        }
+        .work-card:hover {
+            transform: none;       /* 去掉hover上浮效果 */
+        }
+        /* 核心修复：统一图片容器尺寸（摄影/海报通用） */
+        .work-img-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;     /* 统一宽高比4:3，摄影常用，可改为3/2/16/9 */
+        }
+        .work-img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;     /* 图片按比例填充，不拉伸/变形 */
+        }
+        /* 视频样式：仅适配宽度，保留基础比例 */
+        .work-card video {
+            width: 100%;           /* 宽度适配容器 */
+            aspect-ratio: 16/9;    /* 视频统一16:9比例 */
+            object-fit: cover;     /* 避免视频变形 */
+        }
+        /* 关于我区域 */
+        .about {
+            padding: 6rem 0;
+            background-color: #fff;
+        }
+        .about img {
+            width: 100%;
+            height: auto;
+            border-radius: 0;      /* 去掉个人照片圆角 */
+            box-shadow: none;      /* 去掉个人照片阴影 */
+        }
+        /* 页脚 */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        .social-icon {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        .social-icon:hover {
+            color: #ffc107;
+        }
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .category-card {
+                height: 200px;
+            }
+            .work-img-wrapper {
+                aspect-ratio: 3/2; /* 移动端适配，调整为3:2 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">我的作品集</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon text-white"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#photography">摄影</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#poster">海报</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#video">视频剪辑</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">关于我</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页英雄区 -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>我的创意作品集</h1>
+            <p>摄影 · 海报设计 · 视频剪辑</p>
+            <a href="#photography" class="btn btn-warning btn-lg">浏览作品</a>
+        </div>
+    </section>
+
+    <!-- 作品分类入口 -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="#photography" class="category-card" style="background-image: url('https://picsum.photos/800/600?random=2')">
+                        <div class="category-overlay">
+                            <i class="fas fa-camera fa-3x mb-3"></i>
+                            <h3>摄影作品</h3>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#poster" class="category-card" style="background-image: url('https://picsum.photos/800/600?random=3')">
+                        <div class="category-overlay">
+                            <i class="fas fa-paint-brush fa-3x mb-3"></i>
+                            <h3>海报设计</h3>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#video" class="category-card" style="background-image: url('https://picsum.photos/800/600?random=4')">
+                        <div class="category-overlay">
+                            <i class="fas fa-video fa-3x mb-3"></i>
+                            <h3>视频剪辑</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 摄影作品展示（修复标签闭合+统一尺寸） -->
+    <section id="photography" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">摄影作品</h2>
+            <div class="row">
+                <!-- 摄影作品1 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/111.jpg?raw=true" alt="摄影作品1">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品2 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/333.jpg?raw=true" alt="摄影作品2">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品3 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/222.jpg?raw=true" alt="摄影作品3">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品4 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/444.jpg?raw=true" alt="摄影作品4">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品5 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/555.jpg?raw=true" alt="摄影作品5">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品6 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/666.jpg?raw=true" alt="摄影作品6">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品7 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/777.jpg?raw=true" alt="摄影作品7">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品8 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/888.jpg?raw=true" alt="摄影作品8">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品9 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/999.jpg?raw=true" alt="摄影作品9">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品10 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1010.jpg?raw=true" alt="摄影作品10">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品11 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1111.jpg?raw=true" alt="摄影作品11">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品12 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1212.jpg?raw=true" alt="摄影作品12">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1313.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1515.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1616.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1717.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1818.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1919.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/2020.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/2121.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品13 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/2222.jpg?raw=true" alt="摄影作品13">
+                        </div>
+                    </div>
+                </div>
+                <!-- 摄影作品14 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://github.com/zhangsansan2144-ux/limei/blob/main/1414.jpg?raw=true" alt="摄影作品14">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 海报设计展示（统一尺寸） -->
+    <section id="poster" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">海报设计</h2>
+            <div class="row">
+                <!-- 海报作品1 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://picsum.photos/800/600?random=8" alt="海报作品1">
+                        </div>
+                    </div>
+                </div>
+                <!-- 海报作品2 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://picsum.photos/800/600?random=9" alt="海报作品2">
+                        </div>
+                    </div>
+                </div>
+                <!-- 海报作品3 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <div class="work-img-wrapper">
+                            <img src="https://picsum.photos/800/600?random=10" alt="海报作品3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 视频剪辑展示（统一比例） -->
+    <section id="video" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">视频剪辑作品</h2>
+            <div class="row">
+                <!-- 视频作品1 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <video controls>
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            你的浏览器不支持视频播放
+                        </video>
+                    </div>
+                </div>
+                <!-- 视频作品2 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <video controls>
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            你的浏览器不支持视频播放
+                        </video>
+                    </div>
+                </div>
+                <!-- 视频作品3 -->
+                <div class="col-md-4">
+                    <div class="card work-card">
+                        <video controls>
+                            <source src="https://www.w3school.com.cn/i/movie.mp4" type="video/mp4">
+                            你的浏览器不支持视频播放
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <img src="https://picsum.photos/800/600?random=11" alt="个人照片">
+                </div>
+                <div class="col-md-6">
+                    <h2>关于我</h2>
+                    <p class="lead mt-3">大家好，我是一名专注于摄影、海报设计和视频剪辑的创意工作者</p>
+                    <p>拥有5年视觉创作经验，擅长用镜头和设计语言表达情感与故事。我的作品注重光影、色彩与节奏的结合，追求有温度、有质感的视觉呈现。</p>
+                    <h4 class="mt-4">联系方式</h4>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> email@example.com</li>
+                        <li><i class="fas fa-phone me-2"></i> 138-0000-0000</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2025 我的作品集 | 所有作品均为原创</p>
+            <div class="mt-3">
+                <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-behance"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 引入Bootstrap JS和依赖 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定义JS（平滑滚动） -->
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
